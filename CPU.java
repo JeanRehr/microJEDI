@@ -41,9 +41,9 @@ public class CPU
 				break;
 			case 1: // Load program from memory
 				System.out.print("Program name?");
-				String nome = scanner.nextLine();
+				String name = scanner.nextLine();
 				try {
-					byte[] memUser = Files.readAllBytes(Paths.get(nome));
+					byte[] memUser = Files.readAllBytes(Paths.get(name));
 					if (memUser.length < mem.length) {
 						for (int i = 0; i < memUser.length; i++)
 							mem[i] = memUser[i];
