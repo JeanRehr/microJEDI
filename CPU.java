@@ -18,32 +18,32 @@ public class CPU
 	public void UC()
 	{
 		Scanner scanner = new Scanner(System.in);
-		Mostrar show = new Mostrar();
+		Show show = new Show();
 		int userInput;
+		short valor;
 		byte pos;
-		short value;
 		char regist;
 
 		do {
 			show.optionsUC();
 			System.out.print("Option:");
 			while (!scanner.hasNextInt()) {
-				System.out.print("Invalid Option\n");
+				System.out.println("Invalid option.");
 				scanner.next();
 				System.out.print("Option:");
 			}
 			userInput = scanner.nextInt();
-			scanner.nextLine(); // Consuming \n
+			scanner.nextLine(); // Consuming \n 
 
 			switch (userInput) {
 			case 0: // Clear console
 				show.clearConsole();
 				break;
-			case 1: // Load program from file
+			case 1: // Load program from memory
 				System.out.print("Program name?");
-				String name = scanner.nextLine();
+				String nome = scanner.nextLine();
 				try {
-					byte[] memUser = Files.readAllBytes(Paths.get(name));
+					byte[] memUser = Files.readAllBytes(Paths.get(nome));
 					if (memUser.length < mem.length) {
 						for (int i = 0; i < memUser.length; i++)
 							mem[i] = memUser[i];
@@ -51,16 +51,16 @@ public class CPU
 						for (int i = 0; i < mem.length; i++)
 							mem[i] = memUser[i];
 					}
+					System.out.println("Current state of memory and registers:");
+					showMemReg();
 				} catch (Exception e) {
 					System.out.println("File not found.");
 				}
-				System.out.print("State of memory and registers:");
-				showMemReg();
 				break;
 			case 2: // Execute program
-				System.out.println("***** Initiating Execution *****");
+				System.out.println("***** Initianting Execution *****");
 				if (pc != 0) {
-					System.out.print(" >>> Atention! PC different from 0.\n"
+					System.out.print(" >>> Warning! PC different from 0.\n"
 									+ " >>> Press 0 to execute from memory address 0\n"
 									+ " >>> Press other number to execute from current"
 									+ " address pointed to by PC [" + pc + "]."
@@ -76,111 +76,115 @@ public class CPU
 					scanner.nextLine(); // Consuming \n
 				}
 
-					String enter = null;
-					do {
-						if (pc > mem.length - 1 || mem[pc] > 14 || mem[pc] < 0) {
-							System.out.print(" >>> PC[" + pc + "] is not a valid"
-											+ " instruction.\n >>> Ending execution.\n"
-											+ " >>> Press Enter to continue");
-							enter = scanner.nextLine();
-							if (enter.equals(""))
-								break;
-							else
-								break;
-						}
-						// if STOP end
-						if (mem[pc] == 14) {
-							System.out.println("STOP: Ending execution.");
-							break;
-						}
-						UDI();
-						showMemReg();
-						System.out.print("Press Enter to continue, other key to abort."
-										+ "\n--------------------");
+				String enter = null;
+				do {
+					if (pc > mem.length - 1 || mem[pc] > 14 || mem[pc] < 0) {
+						System.out.print(" >>> PC[" + pc + "] is not a valid"
+										+ " instruction.\n >>> Terminating execution.\n"
+										+ " >>> Press Enter to continue");
 						enter = scanner.nextLine();
-					} while (enter.equals(""));
+						if (enter.equals(""))
+							break;
+						else
+							break;
+					}
+					// STOP
+					if (mem[pc] == 14) {
+						System.out.println("STOP: Terminating execution.");
+						break;
+					}
+					UDI();
+					showMemReg();
+					System.out.print("Press Enter to continue, other key to abort."
+									+ "\n--------------------");
+					enter = scanner.nextLine();
+				} while (enter.equals(""));
 				break;
-			case 3: // Change value in mem
+			case 3: // alterar posicao de memoria
 				System.out.print("Address (0 to 63):");
-				while (!scanner.hasNextShort()) {
+				while (!scanner.hasNextByte()) {
 					scanner.next();
 					System.out.print("Invalid address.\nAddress:");
 				}
-				pos = (byte) scanner.nextShort();
+				pos = scanner.nextByte();
 
-				System.out.print("Value (0 from 255):");
+				System.out.print("Value (0 to 255):");
 				while (!scanner.hasNextInt()) {
 					scanner.next();
-					System.out.print("Invalid value.\nValue:");
+					System.out.print("Invalid value .\nValue:");
 				}
-				value = scanner.nextShort();
+				valor = scanner.nextShort();
 
-				if (value >= 0 && value <= 255 && pos >= 0 && pos < mem.length)
-					mem[pos] = (byte) value;
+				if (valor >= 0 && valor <= 255 && pos >= 0 && pos < mem.length)
+					mem[pos] = (byte) valor;
 				else
 					System.out.println("Invalid value or address.");
+
 				break;
-			case 4: // Change register value 
+			case 4: // alterar registrador
 				System.out.print("Register (A, B, C, PC):");
 				regist = scanner.next().charAt(0);
 
-				System.out.print("Value (0 from 255):");
+				System.out.print("Value (0 to 255):");
 				while (!scanner.hasNextShort()) {
 					scanner.next();
-					System.out.print("Invalid value.\nValue:");
+					System.out.print("Invalid value .\nValue:");
 				}
-				value = scanner.nextShort();
+				valor = scanner.nextShort();
 
 				switch (regist) {
 				case 'a':
 				case 'A':
-					if (value >= 0 && value <= 255)
-						a = (byte) value;
+					if (valor >= 0 && valor <= 255)
+						a = (byte) valor;
 					else
 						System.out.println("Invalid value.");
 					break;
 				case 'b':
 				case 'B':
-					if (value >= 0 && value <= 255)
-						b = (byte) value;
+					if (valor >= 0 && valor <= 255)
+						b = (byte) valor;
 					else
 						System.out.println("Invalid value.");
 					break;
 				case 'c':
 				case 'C':
-					if (value >= 0 && value <= 255)
-						c = (byte) value;
+					if (valor >= 0 && valor <= 255)
+						c = (byte) valor;
 					else
 						System.out.println("Invalid value.");
 					break;
 				case 'p':
 				case 'P':
-					if (value >= 0 && value <= 255)
-						pc = (byte) value;
+					if (valor >= 0 && valor <= 255)
+						pc = (byte) valor;
 					else
 						System.out.println("Invalid value.");
 					break;
 				default:
-					System.out.println("Register does not exist or invalid value.");
+					System.out.println("Register does not exit or invalid value.");
 				}
 				break;
-			case 5: // Show mem and register
+			case 5: // Show memory and registers
 				showMemReg();
 				break;
 			case 6: // Show instructions
 				System.out.println("Address.\tInstruction.");
 				for (int i = 0; i < mem.length; i++)
 					getInstruction(i);
+
 				break;
-			case 7: // Save mem
+			case 7: // Save program
 				System.out.print("File name?");
 				Writer w = null;
-				String arquivo = scanner.nextLine();
+				String file = scanner.nextLine();
 				try {
 					w = new BufferedWriter(new OutputStreamWriter(
-									new FileOutputStream(arquivo), "utf-8"));
+									new FileOutputStream(file), "utf-8"));
+
 					for (int i = 0; i < mem.length; i++)
 						w.write((mem[i]));
+
 					w.close();
 				} catch (Exception e) {
 					System.out.println("Could not save memory.");
@@ -192,9 +196,10 @@ public class CPU
 			case 9:
 				System.exit(0);
 			}
-		} while (userInput != 1);
+		} while (userInput != 9);
 		scanner.close();
 	}
+
 
 	// Start ULA
 	public void sum()
@@ -350,9 +355,9 @@ public class CPU
 		short bUn = unsignedToBytes(b);
 		short cUn = unsignedToBytes(c);
 		short pcUn = unsignedToBytes(pc);
-		System.out.print("Registradores:\tA:" + aUn + "\tB:" + bUn + "\tC:" + cUn + "\t[PC:"
+		System.out.print("Registers:\tA:" + aUn + "\tB:" + bUn + "\tC:" + cUn + "\t[PC:"
 						+ pcUn + "]\n");
-		System.out.println("Memoria: --------------------------------------------------"
+		System.out.println("Memory: --------------------------------------------------"
 						+ "-------------+");
 		for (int i = 0; i <= 7; i++) {
 			System.out.print("\t0" + i);
