@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-
 public class CPU
 {
 	private byte a, b, c;
@@ -33,7 +32,7 @@ public class CPU
 				System.out.print("Option:");
 			}
 			userInput = scanner.nextInt();
-			scanner.nextLine(); // Consuming \n 
+			scanner.nextLine(); // Consuming \n
 
 			switch (userInput) {
 			case 0: // Clear console
@@ -61,7 +60,7 @@ public class CPU
 				System.out.println("***** Initianting Execution *****");
 
 				short pc1 = 0;
-				if (pc < mem.length - 1 && pc > -1) 
+				if (pc < mem.length - 1 && pc > -1)
 					pc1 = unsignedToBytes(mem[pc]);
 				else
 					pc1 = unsignedToBytes(pc);
@@ -100,10 +99,15 @@ public class CPU
 					}
 					UDI();
 					showMemReg();
-					System.out.print("Press Enter to continue, other key to abort."
+					System.out.print("Press Enter to continue, a to (A)bort."
 									+ "\n--------------------");
 					enter = scanner.nextLine();
-				} while (enter.equals(""));
+					if (enter.equalsIgnoreCase("a"))
+						break;
+					else if (enter.equals(""))
+						continue;
+
+				} while (true);
 				break;
 			case 3: // Change value in memory
 				System.out.print("Address (0 to 63):");
@@ -174,9 +178,21 @@ public class CPU
 				showMemReg();
 				break;
 			case 6: // Show instructions
-				System.out.println("Address.\tInstruction.");
-				for (int i = 0; i < mem.length; i++)
-					getInstruction(i);
+				System.out.print("Show up to which address?\n"
+								+ "0 to show all addresses:");
+				while (!scanner.hasNextInt()) {
+					System.out.print("\nInvalid address.\n"
+									+ "Show up to which address?");
+				}
+				int addr = scanner.nextInt();
+				System.out.println("Address:\tInstruction:");
+				if (addr == 0 || addr > 63) {
+					for (int i = 0; i < mem.length; i++)
+						getInstruction(i);
+				} else {
+					for (int i = 0; i < addr; i++)
+						getInstruction(i);
+				}
 
 				break;
 			case 7: // Save program
@@ -204,7 +220,6 @@ public class CPU
 		} while (userInput != 9);
 		scanner.close();
 	}
-
 
 	// Start ULA
 	public void sum()
@@ -346,21 +361,20 @@ public class CPU
 		else if (mem[i] == 14)
 			instru = "STOP";
 
-		short pc1 = 0;
-		if (pc < mem.length - 1) 
-			pc1 = unsignedToBytes(mem[pc]);
-
 		short pc2 = 0;
-		if (pc < mem.length - 1 && pc > -1) 
-			pc2 = unsignedToBytes(mem[pc+1]);
-
-		if (instru == null || pc1 > 63 || pc > 63) {
-			System.out.print("[" + i + "]:\t" + "Invalid.\n");
-		} else if (mem[i] == 5 || mem[i] == 6 || mem[i] == 7){
-			System.out.print("[" + i + "]:\t" + instru + "\n");
-		} else {
-			System.out.print("[" + i + "]:\t" + instru + " " + pc2 + "\n");
+		if (pc < mem.length - 1 && pc > -1) {
+			if (i == 63)
+				pc2 = 0;
+			else
+				pc2 = unsignedToBytes(mem[i + 1]);
 		}
+
+		if (instru == null || pc > 63)
+			System.out.print("[" + i + "]:\t\t" + "Invalid.\n");
+		else if (mem[i] == 5 || mem[i] == 6 || mem[i] == 7 || mem[i] == 14)
+			System.out.print("[" + i + "]:\t\t" + instru + "\n");
+		else
+			System.out.print("[" + i + "]:\t\t" + instru + " " + pc2 + "\n");
 	}
 
 	public void showMemReg()
@@ -373,7 +387,7 @@ public class CPU
 		System.out.print("Registers:\tA:" + aUn + "\tB:" + bUn + "\tC:" + cUn + "\t[PC:"
 						+ pcUn + "]\n");
 		System.out.println("Memory: --------------------------------------------------"
-						+ "-------------+");
+						+ "--------------+");
 		for (int i = 0; i <= 7; i++) {
 			System.out.print("\t0" + i);
 			if (i == 7)
@@ -399,7 +413,6 @@ public class CPU
 				System.out.print("\t" + j);
 			}
 
-
 			count++;
 			if (count % 8 == 0)
 				System.out.println("\t|");
@@ -407,7 +420,6 @@ public class CPU
 		}
 		System.out.println("-----------------------------------------------------------"
 						+ "-------------+");
-
 
 		if (pc < mem.length || pc > -1) {
 			System.out.print("Next instruction: ");
@@ -420,7 +432,7 @@ public class CPU
 
 	public short unsignedToBytes(byte a)
 	{
-	    short b = (short) (a & 0xFF);
-	    return b;
+		short b = (short) (a & 0xFF);
+		return b;
 	}
 }
