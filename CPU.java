@@ -41,9 +41,9 @@ public class CPU
 				break;
 			case 1: // Load program from memory
 				System.out.print("Program name?");
-				String name = scanner.nextLine();
+				String nome = scanner.nextLine();
 				try {
-					byte[] memUser = Files.readAllBytes(Paths.get(name));
+					byte[] memUser = Files.readAllBytes(Paths.get(nome));
 					if (memUser.length < mem.length) {
 						for (int i = 0; i < memUser.length; i++)
 							mem[i] = memUser[i];
@@ -59,11 +59,17 @@ public class CPU
 				break;
 			case 2: // Execute program
 				System.out.println("***** Initianting Execution *****");
+
+				short pc1 = 0;
+				if (pc < mem.length - 1 && pc > -1) 
+					pc1 = unsignedToBytes(mem[pc]);
+				else
+					pc1 = unsignedToBytes(pc);
 				if (pc != 0) {
 					System.out.print(" >>> Warning! PC different from 0.\n"
 									+ " >>> Press 0 to execute from memory address 0\n"
 									+ " >>> Press other number to execute from current"
-									+ " address pointed to by PC [" + pc + "]."
+									+ " address pointed to by PC [" + pc1 + "]."
 									+ "\nOption:");
 					while (!scanner.hasNextInt()) {
 						scanner.next();
@@ -75,11 +81,10 @@ public class CPU
 
 					scanner.nextLine(); // Consuming \n
 				}
-
 				String enter = null;
 				do {
-					if (pc > mem.length - 1 || mem[pc] > 14 || mem[pc] < 0) {
-						System.out.print(" >>> PC[" + pc + "] is not a valid"
+					if (pc > mem.length - 1 || pc1 > 14 || pc1 < 0 || pc < 0) {
+						System.out.print(" >>> PC[" + pc1 + "] is not a valid"
 										+ " instruction.\n >>> Terminating execution.\n"
 										+ " >>> Press Enter to continue");
 						enter = scanner.nextLine();
@@ -100,7 +105,7 @@ public class CPU
 					enter = scanner.nextLine();
 				} while (enter.equals(""));
 				break;
-			case 3: // alterar posicao de memoria
+			case 3: // Change value in memory
 				System.out.print("Address (0 to 63):");
 				while (!scanner.hasNextByte()) {
 					scanner.next();
@@ -121,7 +126,7 @@ public class CPU
 					System.out.println("Invalid value or address.");
 
 				break;
-			case 4: // alterar registrador
+			case 4: // Change register value
 				System.out.print("Register (A, B, C, PC):");
 				regist = scanner.next().charAt(0);
 
@@ -176,16 +181,16 @@ public class CPU
 				break;
 			case 7: // Save program
 				System.out.print("File name?");
-				Writer w = null;
+				Writer writer = null;
 				String file = scanner.nextLine();
 				try {
-					w = new BufferedWriter(new OutputStreamWriter(
+					writer = new BufferedWriter(new OutputStreamWriter(
 									new FileOutputStream(file), "utf-8"));
 
 					for (int i = 0; i < mem.length; i++)
-						w.write((mem[i]));
+						writer.write((mem[i]));
 
-					w.close();
+					writer.close();
 				} catch (Exception e) {
 					System.out.println("Could not save memory.");
 				}
@@ -306,7 +311,7 @@ public class CPU
 
 	public void getInstruction(int i)
 	{
-		if (i > mem.length - 1)
+		if (i > mem.length - 1 || i < 0)
 			return;
 
 		String instru = null;
@@ -341,10 +346,20 @@ public class CPU
 		else if (mem[i] == 14)
 			instru = "STOP";
 
-		if (instru == null || i > mem.length) {
-			System.out.println("[" + i + "]:\t" + "Invalido.");
+		short pc1 = 0;
+		if (pc < mem.length - 1) 
+			pc1 = unsignedToBytes(mem[pc]);
+
+		short pc2 = 0;
+		if (pc < mem.length - 1 && pc > -1) 
+			pc2 = unsignedToBytes(mem[pc+1]);
+
+		if (instru == null || pc1 > 63 || pc > 63) {
+			System.out.print("[" + i + "]:\t" + "Invalid.\n");
+		} else if (mem[i] == 5 || mem[i] == 6 || mem[i] == 7){
+			System.out.print("[" + i + "]:\t" + instru + "\n");
 		} else {
-			System.out.println("[" + i + "]:\t" + instru);
+			System.out.print("[" + i + "]:\t" + instru + " " + pc2 + "\n");
 		}
 	}
 
@@ -371,15 +386,19 @@ public class CPU
 
 			short pc1 = 0;
 			short pc2 = 0;
-			if (pc < mem.length - 1) {
+			if (pc < mem.length && pc >= 0) {
 				pc1 = unsignedToBytes(mem[pc]);
 				pc2 = unsignedToBytes(mem[i]);
+				if (pc == i)
+					System.out.print("\t" + "<" + pc1 + ">");
+				else
+					System.out.print("\t" + pc2);
+			} else {
+				int j = i;
+				j = unsignedToBytes(mem[i]);
+				System.out.print("\t" + j);
 			}
 
-			if (pc == i)
-				System.out.print("\t" + "<" + pc1 + ">");
-			else
-				System.out.print("\t" + pc2);
 
 			count++;
 			if (count % 8 == 0)
@@ -389,7 +408,8 @@ public class CPU
 		System.out.println("-----------------------------------------------------------"
 						+ "-------------+");
 
-		if (pc < mem.length) {
+
+		if (pc < mem.length || pc > -1) {
 			System.out.print("Next instruction: ");
 			getInstruction(pc);
 		} else {

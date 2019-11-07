@@ -19,7 +19,7 @@ public class Show
 		System.out.print("Options:"
 						+ "[1] Load program from file.\t[6] Show instructions.\n"
 						+ "\t[2] Execute program.\t\t[7] Save program in file.\n"
-						+ "\t[3] Change position in memory.\t[8] Help.\n"
+						+ "\t[3] Change value in memory.\t[8] Help.\n"
 						+ "\t[4] Change register.\t\t[9] Exit.\n"
 						+ "\t[5] Show memory and registers.\t[0] Clear console.\n");
 		System.out.println("-----------------------------------------------------------"
