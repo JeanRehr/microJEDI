@@ -36,7 +36,8 @@ public class CPU
 
 			switch (userInput) {
 			case 0: // Clear console
-				show.clearConsole();
+				if (System.console() != null)
+					show.clearConsole();
 				break;
 			case 1: // Load program from memory
 				System.out.print("Program name?");
@@ -82,8 +83,13 @@ public class CPU
 				}
 				String enter = null;
 				do {
-					if (pc > mem.length - 1 || pc1 > 14 || pc1 < 0 || pc < 0) {
-						System.out.print(" >>> PC[" + pc1 + "] is not a valid"
+					short pc2 = 0;
+					if (pc < mem.length - 1 && pc > -1)
+						pc2 = unsignedToBytes(mem[pc]);
+					else
+						pc2 = unsignedToBytes(pc);
+					if (pc > mem.length - 1 || mem[pc2] > 14 || pc2 < 0 || pc < 0) {
+						System.out.print(" >>> PC[" + pc2 + "] is not a valid"
 										+ " instruction.\n >>> Terminating execution.\n"
 										+ " >>> Press Enter to continue");
 						enter = scanner.nextLine();
@@ -187,11 +193,23 @@ public class CPU
 				int addr = scanner.nextInt();
 				System.out.println("Address:\tInstruction:");
 				if (addr == 0 || addr > 63) {
-					for (int i = 0; i < mem.length; i++)
+					int i = 0;
+					while (i < mem.length) {
 						getInstruction(i);
+						if (mem[i] == 5 || mem[i] == 6 || mem[i] == 7 || mem[i] == 14)
+							i++;
+						else
+							i += 2;
+					}
 				} else {
-					for (int i = 0; i < addr; i++)
+					int i = 0;
+					while (i < addr) {
 						getInstruction(i);
+						if (mem[i] == 5 || mem[i] == 6 || mem[i] == 7 || mem[i] == 14)
+							i++;
+						else
+							i += 2;
+					}
 				}
 
 				break;
@@ -257,7 +275,7 @@ public class CPU
 
 	public void UDI()
 	{
-		if (pc >= mem.length - 1 || pc > mem.length)
+		if (pc > mem.length - 1)
 			return;
 
 		switch (mem[pc]) {
