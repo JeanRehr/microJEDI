@@ -19,7 +19,7 @@ public class CPU
 		Scanner scanner = new Scanner(System.in);
 		Show show = new Show();
 		int userInput;
-		short valor;
+		short value;
 		byte pos;
 		char regist;
 
@@ -128,10 +128,10 @@ public class CPU
 					scanner.next();
 					System.out.print("Invalid value .\nValue:");
 				}
-				valor = scanner.nextShort();
+				value = scanner.nextShort();
 
-				if (valor >= 0 && valor <= 255 && pos >= 0 && pos < mem.length)
-					mem[pos] = (byte) valor;
+				if (value >= 0 && value <= 255 && pos >= 0 && pos < mem.length)
+					mem[pos] = (byte) value;
 				else
 					System.out.println("Invalid value or address.");
 
@@ -145,34 +145,34 @@ public class CPU
 					scanner.next();
 					System.out.print("Invalid value .\nValue:");
 				}
-				valor = scanner.nextShort();
+				value = scanner.nextShort();
 
 				switch (regist) {
 				case 'a':
 				case 'A':
-					if (valor >= 0 && valor <= 255)
-						a = (byte) valor;
+					if (value >= 0 && value <= 255)
+						a = (byte) value;
 					else
 						System.out.println("Invalid value.");
 					break;
 				case 'b':
 				case 'B':
-					if (valor >= 0 && valor <= 255)
-						b = (byte) valor;
+					if (value >= 0 && value <= 255)
+						b = (byte) value;
 					else
 						System.out.println("Invalid value.");
 					break;
 				case 'c':
 				case 'C':
-					if (valor >= 0 && valor <= 255)
-						c = (byte) valor;
+					if (value >= 0 && value <= 255)
+						c = (byte) value;
 					else
 						System.out.println("Invalid value.");
 					break;
 				case 'p':
 				case 'P':
-					if (valor >= 0 && valor <= 255)
-						pc = (byte) valor;
+					if (value >= 0 && value <= 255)
+						pc = (byte) value;
 					else
 						System.out.println("Invalid value.");
 					break;
@@ -281,23 +281,38 @@ public class CPU
 		switch (mem[pc]) {
 		case 0: // STA
 			mem[pc + 1] = a;
-			pc += 2;
+			if (pc == 63)
+				pc++;
+			else
+				pc += 2;
 			break;
 		case 1: // LDA
 			a = mem[pc + 1];
-			pc += 2;
+			if (pc == 63)
+				pc++;
+			else
+				pc += 2;
 			break;
 		case 2: // STB
 			mem[pc + 1] = b;
-			pc += 2;
+			if (pc == 63)
+				pc++;
+			else
+				pc += 2;
 			break;
 		case 3: // LDB
 			b = mem[pc + 1];
-			pc += 2;
+			if (pc == 63)
+				pc++;
+			else
+				pc += 2;
 			break;
 		case 4: // STC
 			c = mem[pc + 1];
-			pc += 2;
+			if (pc == 63)
+				pc++;
+			else
+				pc += 2;
 			break;
 		case 5: // SUM
 			sum();
@@ -309,33 +324,45 @@ public class CPU
 			com();
 			break;
 		case 8: // JMP
-			pc = mem[++pc];
+			pc = mem[pc + 1];
 			break;
 		case 9: // JPE
 			if (c == 0)
-				pc = mem[++pc];
+				pc = mem[pc + 1];
+			else if (pc == 63)
+				pc++;
 			else
 				pc += 2;
 			break;
 		case 10: // JPG
 			if (c == 2)
-				pc = mem[++pc];
+				pc = mem[pc + 1];
+			else if (pc == 63)
+				pc++;
 			else
 				pc += 2;
 			break;
 		case 11: // JPL
 			if (c == 1)
-				pc = mem[++pc];
+				pc = mem[pc + 1];
+			else if (pc == 63)
+				pc++;
 			else
 				pc += 2;
 			break;
 		case 12: // CONA
 			a = mem[pc + 1];
-			pc += 2;
+			if (pc == 63)
+				pc++;
+			else
+				pc += 2;
 			break;
 		case 13: // CONB
 			b = mem[pc + 1];
-			pc += 2;
+			if (pc == 63)
+				pc++;
+			else
+				pc += 2;
 			break;
 		case 14: // STOP
 			break;
@@ -439,7 +466,7 @@ public class CPU
 		System.out.println("-----------------------------------------------------------"
 						+ "-------------+");
 
-		if (pc < mem.length || pc > -1) {
+		if (pc < mem.length && pc > -1) {
 			System.out.print("Next instruction: ");
 			getInstruction(pc);
 		} else {
