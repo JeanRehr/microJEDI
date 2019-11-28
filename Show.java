@@ -30,7 +30,7 @@ public class Show
 	{
 		System.out.println("STA  :  Stores content of register A to the memory position"
 						+ " followed by the next\n\tmemory position instruction"
-						+ " (a=pc+1).\n\tOpcode instruction: 0 (zero)");
+						+ " (a=pc+1).\n\tOpcode instruction: 0");
 
 		System.out.println("LDA  :  Load to register A the content of memory position"
 						+ " indicated in memory\n\tposition followed this instruction"
