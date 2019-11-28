@@ -74,13 +74,13 @@ public class Show
 		System.out.println("JPG  :  Diverts the execution flow to the address contained"
 						+ " at the position\n\tfollowing this memory instruction. This"
 						+ " is a conditional jump.\n\tWill only occur if A>B"
-						+ " (refister C=2). Must be preceded by COM instruction\n"
+						+ " (register C=2). Must be preceded by COM instruction\n"
 						+ "\t(pc=pc+1).\n\tOpcode instruction: 10");
 
 		System.out.println("JPL  :  Diverts the execution flow to the address contained"
 						+ " at the position\n\tfollowing this memory instruction. This"
 						+ " is a conditional jump.\n\tWill only occur if A<B"
-						+ " (refister C=1). Must be preceded by COM instruction\n"
+						+ " (register C=1). Must be preceded by COM instruction\n"
 						+ "\t(pc=pc+1).\n\tOpcode instruction: 11");
 
 		System.out.println("CONA :  Load the register A with the value following this "
