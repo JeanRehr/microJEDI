@@ -29,24 +29,24 @@ public class Show
 	public void help()
 	{
 		System.out.println("STA  :  Stores content of register A to the memory position"
-						+ " following by the next\n\tmemory position instruction"
-						+ " (pc+1=a).\n\tOpcode instruction: 0 (zero)");
+						+ " followed by the next\n\tmemory position instruction"
+						+ " (a=pc+1).\n\tOpcode instruction: 0 (zero)");
 
 		System.out.println("LDA  :  Load to register A the content of memory position"
-						+ " indicated in memory\n\tposition following this instruction"
-						+ " (a=pc+1).\n\tOpcode instruction: 1");
+						+ " indicated in memory\n\tposition followed this instruction"
+						+ " (pc+1=a).\n\tOpcode instruction: 1");
 
 		System.out.println("STB  :  Stores content of register B to the memory position"
-						+ " following by the next\n\tmemory position instruction"
-						+ "(pc+1=b).\n\tOpcode instruction: 2");
+						+ " followed by the next\n\tmemory position instruction"
+						+ "(b=pc+1).\n\tOpcode instruction: 2");
 
 		System.out.println("LDB  :  Load to register B the content of memory position"
-						+ " indicated in memory\n\tposition following this instruction"
-						+ " (b=pc+1).\n\tOpcode instruction: 3");
+						+ " indicated in memory\n\tposition followed this instruction"
+						+ " (pc+1=b).\n\tOpcode instruction: 3");
 
 		System.out.println("STC  :  Stores content of register C to the memory position"
 						+ " following by the next\n\tmemory position instruction"
-						+ " (c=pc+1).\n\tOpcode instruction: 4");
+						+ " (pc+1=c).\n\tOpcode instruction: 4");
 
 		System.out.println("SUM  :  Sum content of registers A and B and store the"
 						+ " result in register C.\n\tOpcode instruction: 5");
