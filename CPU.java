@@ -11,16 +11,16 @@ import java.util.Scanner;
 public class CPU
 {
 	private byte a, b, c;
-	private byte pc; // Program counter
+	private byte pc;
 	private byte[] mem = new byte[64];
 
-	public void UC()
+	public void CU()
 	{
 		Scanner scanner = new Scanner(System.in);
 		Show show = new Show();
 		int userInput;
 		short value;
-		byte pos;
+		short pos;
 		char regist;
 
 		do {
@@ -60,7 +60,7 @@ public class CPU
 			case 2: // Execute program
 				System.out.println("***** Initianting Execution *****");
 
-				short pc1 = 0;
+				short pc1;
 				if (pc < mem.length - 1 && pc > -1)
 					pc1 = unsignedToBytes(mem[pc]);
 				else
@@ -83,17 +83,19 @@ public class CPU
 				}
 				String enter = null;
 				do {
-					short pc2 = 0;
+					short pc2;
 					if (pc < mem.length - 1 && pc > -1)
 						pc2 = unsignedToBytes(mem[pc]);
 					else
 						pc2 = unsignedToBytes(pc);
-					if (pc > mem.length - 1 || mem[pc2] > 14 || pc2 < 0 || pc < 0) {
+
+					if (pc > mem.length - 1 || pc2 > 14 || pc < 0) {
 						System.out.print(" >>> PC[" + pc2 + "] is not a valid"
 										+ " instruction.\n >>> Terminating execution.\n"
 										+ " >>> Press Enter to continue");
+
 						enter = scanner.nextLine();
-						if (enter.equals(""))
+						if (enter.equals("\n"))
 							break;
 						else
 							break;
@@ -103,7 +105,7 @@ public class CPU
 						System.out.println("STOP: Terminating execution.");
 						break;
 					}
-					UDI();
+					CPU_com();
 					showMemReg();
 					System.out.print("Press Enter to continue, a to (A)bort."
 									+ "\n--------------------");
@@ -116,15 +118,15 @@ public class CPU
 				} while (true);
 				break;
 			case 3: // Change value in memory
-				System.out.print("Address (0 to 63):");
-				while (!scanner.hasNextByte()) {
+				System.out.print("Address (0 to " + (mem.length - 1) + "):");
+				while (!scanner.hasNextShort()) {
 					scanner.next();
 					System.out.print("Invalid address.\nAddress:");
 				}
-				pos = scanner.nextByte();
+				pos = scanner.nextShort();
 
 				System.out.print("Value (0 to 255):");
-				while (!scanner.hasNextInt()) {
+				while (!scanner.hasNextShort()) {
 					scanner.next();
 					System.out.print("Invalid value .\nValue:");
 				}
@@ -192,7 +194,7 @@ public class CPU
 				}
 				int addr = scanner.nextInt();
 				System.out.println("Address:\tInstruction:");
-				if (addr == 0 || addr > 63) {
+				if (addr == 0 || addr > mem.length - 1) {
 					int i = 0;
 					while (i < mem.length) {
 						getInstruction(i);
@@ -230,7 +232,14 @@ public class CPU
 				}
 				break;
 			case 8: // Help
-				show.help();
+				show.clearConsole();
+				show.help1();
+				System.out.print("Press Enter to continue.");
+				String contHelp = scanner.nextLine();
+				if (contHelp == "")
+					show.help2();
+				else
+					show.help2();
 				break;
 			case 9:
 				System.exit(0);
@@ -239,7 +248,7 @@ public class CPU
 		scanner.close();
 	}
 
-	// Start ULA
+	// Start ALU
 	public void sum()
 	{
 		if (a + b > 255)
@@ -271,48 +280,53 @@ public class CPU
 
 		pc += 1;
 	}
-	// End ULA
+	// End ALU
 
-	public void UDI()
+	public void CPU_com()
 	{
 		if (pc > mem.length - 1)
 			return;
 
 		switch (mem[pc]) {
 		case 0: // STA
-			mem[pc + 1] = a;
-			if (pc == 63)
-				pc++;
-			else
+			if (pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			mem[pc + 1] = a;
+			pc += 2;
 			break;
 		case 1: // LDA
-			a = mem[pc + 1];
-			if (pc == 63)
-				pc++;
-			else
+			if (pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			a = mem[pc + 1];
+			pc += 2;
 			break;
 		case 2: // STB
-			mem[pc + 1] = b;
-			if (pc == 63)
-				pc++;
-			else
+			if (pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			mem[pc + 1] = b;
+			pc += 2;
 			break;
 		case 3: // LDB
-			b = mem[pc + 1];
-			if (pc == 63)
-				pc++;
-			else
+			if (pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			b = mem[pc + 1];
+			pc += 2;
 			break;
 		case 4: // STC
-			c = mem[pc + 1];
-			if (pc == 63)
-				pc++;
-			else
+			if (pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			mem[pc + 1] = c;
+			pc += 2;
 			break;
 		case 5: // SUM
 			sum();
@@ -324,45 +338,47 @@ public class CPU
 			com();
 			break;
 		case 8: // JMP
-			pc = mem[pc + 1];
+			if (pc > mem.length - 1)
+				pc += 2;
+			else
+				pc = mem[pc + 1];
 			break;
 		case 9: // JPE
-			if (c == 0)
-				pc = mem[pc + 1];
-			else if (pc == 63)
-				pc++;
-			else
+			if (c != 0 || pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			pc = mem[pc + 1];
 			break;
 		case 10: // JPG
-			if (c == 2)
-				pc = mem[pc + 1];
-			else if (pc == 63)
-				pc++;
-			else
+			if (c != 2 || pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			pc = mem[pc + 1];
 			break;
 		case 11: // JPL
-			if (c == 1)
-				pc = mem[pc + 1];
-			else if (pc == 63)
-				pc++;
-			else
+			if (c != 1 || pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			pc = mem[pc + 1];
 			break;
 		case 12: // CONA
-			a = mem[pc + 1];
-			if (pc == 63)
-				pc++;
-			else
+			if (pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			a = mem[pc + 1];
+			pc += 2;
 			break;
 		case 13: // CONB
-			b = mem[pc + 1];
-			if (pc == 63)
-				pc++;
-			else
+			if (pc > mem.length - 1) {
 				pc += 2;
+				break;
+			}
+			b = mem[pc + 1];
+			pc += 2;
 			break;
 		case 14: // STOP
 			break;
@@ -408,13 +424,13 @@ public class CPU
 
 		short pc2 = 0;
 		if (pc < mem.length - 1 && pc > -1) {
-			if (i == 63)
+			if (i == mem.length - 1)
 				pc2 = 0;
 			else
 				pc2 = unsignedToBytes(mem[i + 1]);
 		}
 
-		if (instru == null || pc > 63)
+		if (instru == null || pc > mem.length - 1)
 			System.out.print("[" + i + "]:\t\t" + "Invalid.\n");
 		else if (mem[i] == 5 || mem[i] == 6 || mem[i] == 7 || mem[i] == 14)
 			System.out.print("[" + i + "]:\t\t" + instru + "\n");
@@ -424,7 +440,7 @@ public class CPU
 
 	public void showMemReg()
 	{
-		int count = 0;
+		short count = 0;
 		short aUn = unsignedToBytes(a);
 		short bUn = unsignedToBytes(b);
 		short cUn = unsignedToBytes(c);
@@ -433,13 +449,13 @@ public class CPU
 						+ pcUn + "]\n");
 		System.out.println("Memory: --------------------------------------------------"
 						+ "--------------+");
-		for (int i = 0; i <= 7; i++) {
+		for (short i = 0; i <= 7; i++) {
 			System.out.print("\t0" + i);
 			if (i == 7)
 				System.out.print("\t|");
 		}
 		System.out.println("\n\t\t\t\t\t\t\t\t\t|");
-		for (int i = 0; i < mem.length; i++) {
+		for (short i = 0; i < mem.length; i++) { // Show the memory value
 			if (i == 0 || i % 8 == 0)
 				System.out.print(i + ":");
 
@@ -453,18 +469,21 @@ public class CPU
 				else
 					System.out.print("\t" + pc2);
 			} else {
-				int j = i;
-				j = unsignedToBytes(mem[i]);
-				System.out.print("\t" + j);
+				short pc3 = i;
+				pc3 = unsignedToBytes(mem[i]);
+				System.out.print("\t" + pc3);
 			}
 
 			count++;
 			if (count % 8 == 0)
 				System.out.println("\t|");
-
 		}
-		System.out.println("-----------------------------------------------------------"
-						+ "-------------+");
+		if (count % 8 != 0)
+			System.out.println("\n-----------------------------------------------------"
+							+ "-------------------+");
+		else
+			System.out.println("-------------------------------------------------------"
+							+ "-----------------+");
 
 		if (pc < mem.length && pc > -1) {
 			System.out.print("Next instruction: ");

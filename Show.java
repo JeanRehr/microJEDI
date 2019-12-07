@@ -26,23 +26,24 @@ public class Show
 						+ "--------------------");
 	}
 
-	public void help()
+	public void help1()
 	{
-		System.out.println("STA  :  Stores content of register A to the memory position"
-						+ " followed by the next\n\tmemory position instruction"
-						+ " (a=pc+1).\n\tOpcode instruction: 0");
 
-		System.out.println("LDA  :  Load to register A the content of memory position"
-						+ " indicated in memory\n\tposition followed this instruction"
-						+ " (pc+1=a).\n\tOpcode instruction: 1");
+		System.out.println("STA  :  Stores the content of register A to the memory"
+						+ " position following this\n\tmemory position instruction"
+						+ " (pc+1=a).\n\tOpcode instruction: 0");
 
-		System.out.println("STB  :  Stores content of register B to the memory position"
-						+ " followed by the next\n\tmemory position instruction"
-						+ "(b=pc+1).\n\tOpcode instruction: 2");
+		System.out.println("LDA  :  Load to register A the content of the next memory"
+						+ " position\n\tfollowing this instruction"
+						+ " (a=pc+1).\n\tOpcode instruction: 1");
 
-		System.out.println("LDB  :  Load to register B the content of memory position"
-						+ " indicated in memory\n\tposition followed this instruction"
-						+ " (pc+1=b).\n\tOpcode instruction: 3");
+		System.out.println("STB  :  Stores the content of register B to the memory"
+						+ " position following this\n\tmemory position instruction"
+						+ " (pc+1=b).\n\tOpcode instruction: 2");
+
+		System.out.println("LDB  :  Load to register B the content of the next memory"
+						+ " position\n\tfollowing this instruction"
+						+ " (b=pc+1).\n\tOpcode instruction: 3");
 
 		System.out.println("STC  :  Stores content of register C to the memory position"
 						+ " following by the next\n\tmemory position instruction"
@@ -58,7 +59,10 @@ public class Show
 		System.out.println("COM  :  Compares content of registers A and B, store the"
 						+ " result in register C.\n\tIf A=B then C=0; if A<B then C=1;"
 						+ " if A>B then C=2.\n\tOpcode instruction: 7");
+	}
 
+	public void help2()
+	{
 		System.out.println("JMP  :  Diverts the execution flow to the address contained"
 						+ " at the position\n\tfollowing this memory instruction. This"
 						+ " is an unconditional jump.\n\tThis instruction load to"
@@ -90,5 +94,6 @@ public class Show
 						+ " next memory position.\n\tOpcode instruction: 13");
 
 		System.out.println("STOP :  Terminate execution.\n\tOpcode instruction: 14");
+
 	}
 }
