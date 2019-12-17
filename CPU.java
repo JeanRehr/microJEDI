@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class CPU
 {
 	private byte a, b, c, pc;
+	private byte pc;
 	private byte[] mem = new byte[64];
 
 	public void CU()
