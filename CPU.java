@@ -14,7 +14,7 @@ public class CPU
 	private byte pc;
 	private byte[] mem = new byte[64];
 
-	public void CU()
+	public void CU() // Control Unit
 	{
 		Scanner scanner = new Scanner(System.in);
 		Show show = new Show();
@@ -41,9 +41,9 @@ public class CPU
 				break;
 			case 1: // Load program from memory
 				System.out.print("Program name?");
-				String nome = scanner.nextLine();
+				String name = scanner.nextLine();
 				try {
-					byte[] memUser = Files.readAllBytes(Paths.get(nome));
+					byte[] memUser = Files.readAllBytes(Paths.get(name));
 					if (memUser.length < mem.length) {
 						for (int i = 0; i < memUser.length; i++)
 							mem[i] = memUser[i];
@@ -248,7 +248,7 @@ public class CPU
 		scanner.close();
 	}
 
-	// Start ALU
+	// Start Arithmethic-Logic Unit
 	public void sum()
 	{
 		if (a + b > 255)
