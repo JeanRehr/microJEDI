@@ -5,7 +5,7 @@ public class Show
 	public void clearConsole()
 	{
 		// ANSI CODE
-		// System.out.println("\033[2J\033[;H"); // Works but no
+		// System.out.println("\033[2J\033[;H"); // Works but not quite
 		final String ANSI_CLS = "\u001b[2J"; // Clear screen.
 		final String ANSI_HOME = "\u001b[H"; // Cursor.
 		System.out.print(ANSI_CLS + ANSI_HOME);
