@@ -62,21 +62,20 @@ public class CPU {
 				}
 				break;
 			case 2: // Execute program
-				System.out.println("***** Initianting Execution *****");
 
 				/*
 				short pc1;
 				if (pc < mem.length - 1 && pc > -1)
-					pc1 = unsignedToBytes(mem[pc]);
+					pc1 = bytesToUnsigned(mem[pc]);
 				else
-					pc1 = unsignedToBytes(pc);
+					pc1 = bytesToUnsigned(pc);
 				*/
 
 				if (pc != 0) {
 					System.out.print(" >>> Warning! PC different from 0.\n"
 									+ " >>> Press 0 to execute from memory address 0\n"
 									+ " >>> Press other number to execute from current"
-									+ " address pointed to by PC [" + unsignedToBytes(pc) + "]."
+									+ " address pointed to by PC [" + bytesToUnsigned(pc) + "]."
 									+ "\nOption:");
 					while (!scanner.hasNextInt()) {
 						scanner.next();
@@ -89,13 +88,17 @@ public class CPU {
 					scanner.nextLine(); // Consuming \n
 				}
 				String enter = null;
+				System.out.println("***** Initianting Execution *****");
 				while (true) {
-					short pc2 = 0;
-					if (pc > mem.length - 1 || pc < 0) // array oob excep
-						pc2 = unsignedToBytes(pc);
-					
-					if (pc > mem.length - 1 || pc < 0 || pc2 > 14) {
-						System.out.print(" >>> Instruction PC[" + pc2 +
+					showMemReg2(a, b, c, pc, mem);
+
+					byte pc2 = 0;
+					if (pc > mem.length - 1) {
+						pc2 = pc;
+					}
+
+					if (pc < 0 || bytesToUnsigned(pc2) > 14 || bytesToUnsigned(mem[pc]) > 14) {
+						System.out.print("\n >>> Instruction PC[" + bytesToUnsigned(pc) +
 										"] is not valid.\n >>> Terminating execution.\n" +
 										" >>> Press Enter to continue");
 
@@ -107,10 +110,14 @@ public class CPU {
 					}
 					// STOP
 					if (mem[pc] == 14) {
-						System.out.println("STOP: Terminating execution.");
-						break;
+						System.out.print("\nSTOP: Terminating execution.\n" +
+											">>> Press enter to continue.");
+						scanner.nextLine();
+						if (enter.equals("\n"))
+							break;
+						else
+							break;
 					}
-					showMemReg2(a, b, c, pc, mem);
 					System.out.print("\nPress Enter to continue, a to (A)bort.\n"
 									+ "> ");
 					enter = scanner.nextLine();
@@ -362,6 +369,14 @@ public class CPU {
 			else
 				pc = mem[pc + 1];
 			break;
+		/*
+		TODO:
+		JPE, JPG and JPL will execute even if the instruction before is not COM
+		however it must be preceded by COM
+		idea:
+		if mem[pc - 1] == 7, execute cond jump
+		set flags based on comparasion, then jump based on flags
+		*/
 		case 9: // JPE
 			if (c != 0 || pc >= mem.length - 1) {
 				pc += 2;
@@ -383,6 +398,14 @@ public class CPU {
 			}
 			pc = mem[pc + 1];
 			break;
+		/*
+		TODO:
+		Make Register A and B not mutable after calling CONA and CONB
+		PSEUDO CODE:
+		fn setValue (int value)
+			if isMutable
+				this = value;
+		*/
 		case 12: // CONA
 			if (pc >= mem.length - 1) {
 				pc += 2;
@@ -441,16 +464,14 @@ public class CPU {
 			instru = "STOP";
 
 		short pc2 = 0; // number in front of instruction, denoting the parameter of next instruction at <pc>
-		if (pc < mem.length - 1 && pc > -1) {
-			if (addr == mem.length - 1)
-				pc2 = 0;
-			else
-				pc2 = unsignedToBytes(mem[addr + 1]);
-		}
+		if (addr == mem.length - 1)
+			pc2 = 0;
+		else
+			pc2 = bytesToUnsigned(mem[addr + 1]);
 
 		if (instru == null)
-			System.out.print("[" + unsignedToBytes(pc) + "]:\t\t" + "Invalid");
-		else if (mem[addr] == 5 || mem[addr] == 6|| mem[addr] == 7) // SUM, SUB and COM does not use parameters
+			System.out.print("[" + addr + "]:\t\t" + "Invalid");
+		else if (mem[addr] == 5 || mem[addr] == 6|| mem[addr] == 7 || mem[addr] == 14) // SUM, SUB, COM and STOP does not use parameter
 			System.out.print("[" + addr + "]:\t\t" + instru);
 		else
 			System.out.print("[" + addr + "]:\t\t" + instru + " " + pc2);
@@ -459,8 +480,8 @@ public class CPU {
 
 	public void showMemReg2(byte a, byte b, byte c, byte pc, byte[] mem) {
 		short count = 0;
-		System.out.print("Registers:\tA:" + unsignedToBytes(a) + "\tB:" + unsignedToBytes(b) +
-						"\tC:" + unsignedToBytes(c) + "\t[PC:" + unsignedToBytes(pc) + "]\n");
+		System.out.print("Registers:\tA:" + bytesToUnsigned(a) + "\tB:" + bytesToUnsigned(b) +
+						"\tC:" + bytesToUnsigned(c) + "\t[PC:" + bytesToUnsigned(pc) + "]\n");
 
 		System.out.println("Memory: ------------------------------------------------" +
 						"----------------+");
@@ -477,12 +498,12 @@ public class CPU {
 
 			if (pc < mem.length && pc >=0) {
 				if (pc == i)
-					System.out.print("\t" + "<" + unsignedToBytes(mem[pc]) + ">");
+					System.out.print("\t" + "<" + bytesToUnsigned(mem[pc]) + ">");
 				else
-					System.out.print("\t" + unsignedToBytes(mem[i]));
+					System.out.print("\t" + bytesToUnsigned(mem[i]));
 
 			} else {
-				System.out.print("\t" + unsignedToBytes(mem[i]));
+				System.out.print("\t" + bytesToUnsigned(mem[i]));
 			}
 
 			count++;
@@ -501,16 +522,16 @@ public class CPU {
 			System.out.print("Next instruction: ");
 			getInstructionAtAddr(pc, pc, mem);
 		} else {
-			System.out.print("Next instruction: [" + unsignedToBytes(pc) + "]:\t\t" + "Invalid");
+			System.out.print("Next instruction: [" + bytesToUnsigned(pc) + "]:\t\t" + "Invalid");
 		}
 	}
 
 	public void showMemReg() {
 		short count = 0;
-		short aUn = unsignedToBytes(a);
-		short bUn = unsignedToBytes(b);
-		short cUn = unsignedToBytes(c);
-		short pcUn = unsignedToBytes(pc);
+		short aUn = bytesToUnsigned(a);
+		short bUn = bytesToUnsigned(b);
+		short cUn = bytesToUnsigned(c);
+		short pcUn = bytesToUnsigned(pc);
 		System.out.print("Registers:\tA:" + aUn + "\tB:" + bUn + "\tC:" + cUn + "\t[PC:"
 						+ pcUn + "]\n");
 		System.out.println("Memory: --------------------------------------------------"
@@ -528,15 +549,15 @@ public class CPU {
 			short pc1 = 0;
 			short pc2 = 0;
 			if (pc < mem.length && pc >= 0) {
-				pc1 = unsignedToBytes(mem[pc]);
-				pc2 = unsignedToBytes(mem[i]);
+				pc1 = bytesToUnsigned(mem[pc]);
+				pc2 = bytesToUnsigned(mem[i]);
 				if (pc == i)
 					System.out.print("\t" + "<" + pc1 + ">");
 				else
 					System.out.print("\t" + pc2);
 			} else {
 				short pc3 = i;
-				pc3 = unsignedToBytes(mem[i]);
+				pc3 = bytesToUnsigned(mem[i]);
 				System.out.print("\t" + pc3);
 			}
 
@@ -601,7 +622,7 @@ public class CPU {
 			if (i == mem.length - 1)
 				pc2 = 0;
 			else
-				pc2 = unsignedToBytes(mem[i + 1]);
+				pc2 = bytesToUnsigned(mem[i + 1]);
 		}
 
 		if (instru == null)
@@ -612,7 +633,7 @@ public class CPU {
 			System.out.print("[" + i + "]:\t\t" + instru + " " + pc2 + "\n");
 	}
 
-	public short unsignedToBytes(byte a)
+	public short bytesToUnsigned(byte a)
 	{
 		short b = (short) (a & 0xFF);
 		return b;

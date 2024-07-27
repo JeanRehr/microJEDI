@@ -63,7 +63,7 @@ public class Show
 
 						"JMP  :  Diverts the execution flow to the address contained" +
 						" at the position\n\tfollowing this memory instruction. This" +
-						" is an unconditional jump.\n\tThis instruction load to" +
+						" is an unconditional jump.\n\tThis instruction loads to" +
 						" register PC the value of the memory position\n\tfollowing" +
 						" this instruction (pc=pc+1).\n\tOpcode instruction: 8\n"
 						);
