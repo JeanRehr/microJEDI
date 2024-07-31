@@ -602,24 +602,30 @@ private class IDU { /* instruction decoder unit */
 	/*
 	 * maybe needs to have COM at mem[pc-1] for cond jumps to work? not tested at the uni software.
 	 * idea:
-	 * if (mem[pc-1] == 7) then jump
+	 * if (mem[pc-1] == 7 && c == 0) then jump
 	 * else pc+2;
 	 */
 	public void jpe(byte c, byte pc) {
 		if (c == 0) {
 			setPC(getEleAtOrPC((short) (pc + 1)));
+		} else {
+			setPC((byte) (pc + 2));
 		}
 	}
 
 	public void jpg(byte c, byte pc) {
 		if (c == 2) {
 			setPC(getEleAtOrPC((short) (pc + 1)));
+		} else {
+			setPC((byte) (pc + 2));
 		}
 	}
 
 	public void jpl(byte c, byte pc) {
 		if (c == 1) {
 			setPC(getEleAtOrPC((short) (pc + 1)));
+		} else {
+			setPC((byte) (pc + 2));
 		}
 	}
 
