@@ -14,7 +14,7 @@ To execute the program, run:
 $ java com/microjedi/Main
 ```
 
-Translated text available in the com/microjedi/Texts.java file.
+Translated text available in the com/microjedi/Text.java file.
 
 ![cupj-1](https://user-images.githubusercontent.com/49696706/120048850-ad90c600-bfee-11eb-9cec-6678d16fcf50.png)
 ![cupj-2](https://user-images.githubusercontent.com/49696706/120048871-c4371d00-bfee-11eb-9ccb-94efcfb282bc.png)
