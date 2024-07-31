@@ -33,7 +33,7 @@ public class CPU {
 	}
 
 	/* 
-	 * will return the value of mem at index if index is
+	 * Will return the value of mem at index. If index is
 	 * out of bounds of this.mem return this.pc
 	 */
 	public byte getEleAtOrPC(short index) {
@@ -98,7 +98,7 @@ public class CPU {
 		return value = (byte) Integer.parseInt(hex, 16);
 	}
 
-	/* Test to see if entered hex values are able to be translated to an int */
+	/* Test to see if entered hex values from user are able to be translated to an int */
 	public boolean isHexParseable(String hex) {
 		try {
 			Integer.parseInt(hex, 16);
@@ -166,7 +166,7 @@ public class CPU {
 		}
 	}
 
-	/* option 1 */
+	/* Option 1 */
 	public void loadProgram(byte[] mem, Scanner scanner) {
 		System.out.print("The loaded file must be in bytes.\nProgram name? ");
 		String name = scanner.nextLine();
@@ -181,7 +181,7 @@ public class CPU {
 		}
 	}
 
-	/* option 2 */
+	/* Option 2 */
 	public void executeProgram(byte a, byte b, byte c, byte pc, byte[] mem, ALU alu, IDU idu, Scanner scanner) {
 		String cont;
 		byte pc2; 
@@ -249,7 +249,7 @@ public class CPU {
 		}
 	}
 
-	/* option 3 */
+	/* Option 3 */
 	public void changeValueMem(byte[] mem, Scanner scanner) {
 		short value;
 		short pos;
@@ -276,7 +276,7 @@ public class CPU {
 		}
 	}
 
-	/* option 4 */
+	/* Option 4 */
 	public void changeValueReg(byte[] mem, Scanner scanner) {
 		char reg;
 		short value;
@@ -329,7 +329,7 @@ public class CPU {
 		}
 	}
 
-	/* option 5 */
+	/* Option 5 */
 	public void showMemReg(byte a, byte b, byte c, byte pc, byte[] mem) {
 		short count = 0;
 		System.out.print("Registers:\tA:" + byteToHex1F((byte) toUnsignedByte(a)) +
@@ -339,15 +339,15 @@ public class CPU {
 
 		System.out.println("Memory: ------------------------------------------------" +
 						"----------------+");
-		for (short i = 0; i <= 7; i++) { // top numbers
+		for (short i = 0; i <= 7; i++) { /* Top numbers */
 			System.out.print("\t0" + i);
 			if (i == 7)
 				System.out.print("\t|");
 		}
 		System.out.println("\n\t\t\t\t\t\t\t\t\t|");
 
-		for (short i = 0; i < mem.length; i++) { // show memory values byte array
-			if (i == 0 || i % 8 == 0) { // right numbers
+		for (short i = 0; i < mem.length; i++) { /* Show memory values byte array */
+			if (i == 0 || i % 8 == 0) { /* Right numbers */
 				System.out.print(byteToHex2F((byte) i) + ":");
 			}
 
@@ -380,7 +380,7 @@ public class CPU {
 		}
 	}
 
-	/* option 6 */
+	/* Option 6 */
 	public void showInstructions(byte[] mem, Scanner scanner) {
 		System.out.print("Show up to which address?" +
 						" (0 to show all addresses)> ");
@@ -418,7 +418,7 @@ public class CPU {
 		}
 	}
 
-	/* option 7 */
+	/* Option 7 */
 	public void saveProgram(byte[] mem, Scanner scanner) {
 		System.out.print("The saved file will be in bytes.\nFile name? ");
 		String pathname = scanner.nextLine();
@@ -430,7 +430,7 @@ public class CPU {
 		}
 	}
 
-	/* option 8 */
+	/* Option 8 */
 	public void showHelp(Text text, Scanner scanner) {
 		text.clearConsole();
 		text.help1();
@@ -441,7 +441,7 @@ public class CPU {
 			text.help2();
 	}
 
-	/* abstracting getting only one instruction at addr */
+	/* Abstracting getting only one instruction at addr */
 	public String getInstruction(short addr, byte[] mem) {
 		if (addr > mem.length - 1 || addr < 0)
 			return "\nInstruction called with an invalid address";
