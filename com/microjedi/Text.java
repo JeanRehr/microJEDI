@@ -11,7 +11,8 @@ public class Text {
 	}
 
 	public void options() { 
-		System.out.print("\n-----------------------------------------------------------" +
+		System.out.print(
+						"\n-----------------------------------------------------------" +
 						"--------------------\n" +
 						"Options:" +
 						"[1] Load program from file.\t[6] Show instructions.\n" +

@@ -1,15 +1,30 @@
 package com.microjedi;
 
+/* 
+ * The microJEDI architecture is a hypothetical architecture developed for educational
+ * purposes. It is based on an Arithmetic Logic Unit (ALU), a Control Unit (CU), an
+ * Instruction Decoder Unit (IDU), 3 registers associated with the ALU (registers A, B,
+ * and C) and an instruction register (PC).
+ * Project almost the way the paper describes.
+ * Compare instruction does not work as intended due to java's lack of unsigned support
+ * Maybe not the best OOP way to write it.
+ */
+
 import java.util.Scanner;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.FileOutputStream;
 
-
 public class CPU {
-	private byte a, b, c;
-	private byte pc;
-	private byte[] mem = new byte[64];
+	private byte a, b, c, pc; /* registers */
+
+	/* 
+	 * Maximum supported value of mem is 128 due to java's lack of unsigned values
+	 * otherwise it could be 256 maximum, changing type to int would increase the
+	 * maximum value but would have to change the registers type, fn parameters, and
+	 * return values to int as well, would have to sligthly change the formatting fn
+	 */
+	private byte[] mem = new byte[128]; 
 
 	public boolean isAMutable = true;
 	public boolean isBMutable = true;
@@ -32,10 +47,7 @@ public class CPU {
 		return this.pc;
 	}
 
-	/* 
-	 * Will return the value of mem at index. If index is
-	 * out of bounds of this.mem return this.pc
-	 */
+	/* Return value of mem at index. If index is oob in this.mem then return this.pc */
 	public byte getEleAtOrPC(short index) {
 		if (index >= 0 && index < this.mem.length)
 			return this.mem[index];
@@ -74,15 +86,24 @@ public class CPU {
 	public short toUnsignedByte(byte printValue) {
 		return (short) (printValue & 0xFF);
 	}
-
-	/* 0 in front when printValue less than 10 */
-	public String byteToHex2F(byte printValue) {
+	
+	/*public String parseByteToHex(byte printValue) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%02X", printValue));
+		if (printValue < 16) // 0 in front when printValue less than 16 (10 in hex)
+			sb.append(String.format("%02X", printValue));
+		else
+			sb.append(String.format("%01X", printValue));
+		return sb.toString();
+	}*/
+
+	/* Split parseByteToHex in two to format correctly in certain cases. */
+	public String parseByteToHex2F(byte printValue) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("%02X", printValue)); 
 		return sb.toString();
 	}
 
-	public String byteToHex1F(byte printValue) {
+	public String parseByteToHex1F(byte printValue) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("%01X", printValue));
 		return sb.toString();
@@ -93,18 +114,13 @@ public class CPU {
 		return value = (short) Integer.parseInt(hex, 16);
 	}
 
-	public byte parseHexToByte(String hex) {
-		byte value;
-		return value = (byte) Integer.parseInt(hex, 16);
-	}
-
-	/* Test to see if entered hex values from user are able to be translated to an int */
+	/* Test to see if hex values from user are able to be translated to an int */
 	public boolean isHexParseable(String hex) {
 		try {
 			Integer.parseInt(hex, 16);
 			return true;
 		} catch (final NumberFormatException e) {
-			System.out.println("Not a Hexadecimal number");
+			System.out.println("Not a Hexadecimal number.");
 			return false;
 		}
 	}
@@ -128,7 +144,7 @@ public class CPU {
 				System.out.print("Option> ");
 			}
 			userOpt = scanner.nextShort();
-			scanner.nextLine(); // Consuming \n
+			scanner.nextLine(); /* Consuming \n */
 
 			switch (userOpt) {
 			case 0: /* Clear console */
@@ -145,7 +161,7 @@ public class CPU {
 			case 3: /* Change value in memory */
 				changeValueMem(mem, scanner);
 				break;
-			case 4: /* Change register */
+			case 4: /* Change value in register */
 				changeValueReg(mem, scanner);
 				break;
 			case 5: /* Show memory and registers */
@@ -164,6 +180,7 @@ public class CPU {
 				break;
 			}
 		}
+		scanner.close();
 	}
 
 	/* Option 1 */
@@ -182,7 +199,8 @@ public class CPU {
 	}
 
 	/* Option 2 */
-	public void executeProgram(byte a, byte b, byte c, byte pc, byte[] mem, ALU alu, IDU idu, Scanner scanner) {
+	public void executeProgram(byte a, byte b, byte c, byte pc, byte[] mem,
+								ALU alu, IDU idu, Scanner scanner) {
 		String cont;
 		byte pc2; 
 
@@ -196,7 +214,7 @@ public class CPU {
 							" >>> Press 0 to execute from memory address 0\n" +
 							" >>> Press any other number to execute from current" +
 							" address pointed to by PC [" +
-							byteToHex1F((byte) toUnsignedByte(pc)) + "]." +
+							parseByteToHex1F((byte) toUnsignedByte(pc)) + "]." +
 							"\nOption> ");
 
 			while (!scanner.hasNextShort()) {
@@ -208,12 +226,12 @@ public class CPU {
 			if ((codPC = scanner.nextShort()) == 0)
 				setPC((byte) 0);
 
-			scanner.nextLine(); // Consuming \n
+			scanner.nextLine(); /* Consuming \n */
 		}
 
 		System.out.println("***** Initianting Execution *****");
 		while (!isStop) {
-			/* The following assignments are needed because of java's pass by value only nature */
+			/* These assignments are needed due to java's pass by value nature */
 			a = getA();
 			b = getB();
 			c = getC();
@@ -226,9 +244,9 @@ public class CPU {
 
 			if (pc < 0 || toUnsignedByte(getEleAtOrPC(pc)) > 14) {
 				System.out.print("\n >>> Instruction at PC[" +
-								byteToHex2F((byte) toUnsignedByte(pc)) +
+								parseByteToHex2F((byte) toUnsignedByte(pc)) +
 								"] is not valid, instruction <" +
-								byteToHex2F((byte) getEleAtOrPC(pc)) + 
+								parseByteToHex2F((byte) getEleAtOrPC(pc)) + 
 								"> does not exist.\n >>> Terminating execution.\n" +
 								" >>> Press Enter to continue");
 
@@ -239,8 +257,7 @@ public class CPU {
 					break;
 			}
 
-			System.out.print("\nPress Enter to continue, a to (A)bort.\n" +
-							"> ");
+			System.out.print("\nPress Enter to continue, a to (A)bort.\n> ");
 			cont = scanner.nextLine();
 			if (cont.equalsIgnoreCase("a"))
 				break;
@@ -255,7 +272,8 @@ public class CPU {
 		short pos;
 		String userInput;
 
-		System.out.print("Address (0 to " + byteToHex1F((byte) (mem.length - 1)) + ")> ");
+		System.out.print("Address (0 to " +
+						parseByteToHex1F((byte) (mem.length - 1)) + ")> ");
 		while (!isHexParseable(userInput = scanner.nextLine())) {
 			System.out.print("Invalid address.\nAddress> ");
 		}
@@ -266,8 +284,6 @@ public class CPU {
 			System.out.print("Invalid value .\nValue> ");
 		}
 		value = parseHexToShort(userInput);
-
-		System.out.println("test: Value to be assigned: "+ value +"\nPosition: " + pos);
 
 		if (value >= 0 && value <= 255 && pos >= 0 && pos < mem.length) {
 			setMemAtIndex((byte) toUnsignedByte((byte) value), pos);
@@ -282,19 +298,28 @@ public class CPU {
 		short value;
 		String userInput;
 
+		System.out.println("Press 0 to zero all registers.");
 		System.out.print("Register (A, B, C, PC)> ");
 		reg = scanner.next().charAt(0);
 		scanner.nextLine(); /* Consuming \n */
 
+		switch (reg) {
+		case '0':
+			setA((byte) 0);
+			setB((byte) 0);
+			setC((byte) 0);
+			setPC((byte) 0);
+			return;
+		}
+
 		System.out.print("Value (0 to FF)> ");
 
 		while (!isHexParseable(userInput = scanner.nextLine())) {
-			System.out.print("Invalid value .\nValue> ");
+			System.out.print("Invalid value.\nValue> ");
 		}
 
 		value = parseHexToShort(userInput);
 
-		System.out.println("test: Value to be assigned: "+ value);
 		switch (reg) {
 		case 'a':
 		case 'A':
@@ -332,10 +357,10 @@ public class CPU {
 	/* Option 5 */
 	public void showMemReg(byte a, byte b, byte c, byte pc, byte[] mem) {
 		short count = 0;
-		System.out.print("Registers:\tA:" + byteToHex1F((byte) toUnsignedByte(a)) +
-						"\tB:" + byteToHex1F((byte) toUnsignedByte(b)) +
-						"\tC:" + byteToHex1F((byte) toUnsignedByte(c)) +
-						"\t[PC:" + byteToHex1F((byte) toUnsignedByte(pc)) + "]\n");
+		System.out.print("Registers:\tA:" + parseByteToHex1F((byte) toUnsignedByte(a)) +
+						"\tB:" + parseByteToHex1F((byte) toUnsignedByte(b)) +
+						"\tC:" + parseByteToHex1F((byte) toUnsignedByte(c)) +
+						"\t[PC:" + parseByteToHex1F((byte) toUnsignedByte(pc)) + "]\n");
 
 		System.out.println("Memory: ------------------------------------------------" +
 						"----------------+");
@@ -346,18 +371,18 @@ public class CPU {
 		}
 		System.out.println("\n\t\t\t\t\t\t\t\t\t|");
 
-		for (short i = 0; i < mem.length; i++) { /* Show memory values byte array */
+		for (short i = 0; i < mem.length; i++) { /* Memory values */
 			if (i == 0 || i % 8 == 0) { /* Right numbers */
-				System.out.print(byteToHex2F((byte) i) + ":");
+				System.out.print(parseByteToHex2F((byte) i) + ":");
 			}
 
-			if (pc == i)
-				System.out.print("\t" + "<" + byteToHex1F((byte) toUnsignedByte(getEleAtOrPC(pc))) + ">");
-			else if (pc < 0 || pc >= mem.length)
-				System.out.print("\t" + byteToHex1F((byte) toUnsignedByte(getEleAtOrPC(i))));
-			else
-				System.out.print("\t" + byteToHex1F((byte) toUnsignedByte(getEleAtOrPC(i))));
-
+			if (pc == i) {
+				System.out.print("\t" + "<" + parseByteToHex1F((byte) toUnsignedByte(getEleAtOrPC(pc))) + ">");
+			} else if (pc < 0 || pc >= mem.length) {
+				System.out.print("\t" + parseByteToHex1F((byte) toUnsignedByte(getEleAtOrPC(i))));
+			} else {
+				System.out.print("\t" + parseByteToHex1F((byte) toUnsignedByte(getEleAtOrPC(i))));
+			}
 			count++;
 
 			if (count % 8 == 0) {
@@ -376,7 +401,7 @@ public class CPU {
 		if (pc < mem.length && pc >= 0) {
 			System.out.print("Next instruction: " + getInstruction(pc, mem));
 		} else {
-			System.out.print("Next instruction: [" + byteToHex1F((byte) toUnsignedByte(pc)) + "]:\t\t" + "Invalid");
+			System.out.print("Next instruction: [" + parseByteToHex1F((byte) toUnsignedByte(pc)) + "]:\t\t" + "Invalid");
 		}
 	}
 
@@ -385,21 +410,25 @@ public class CPU {
 		System.out.print("Show up to which address?" +
 						" (0 to show all addresses)> ");
 
-		while (!scanner.hasNextShort()) {
-			scanner.next();
-			System.out.print("\nInvalid address.\n" +
-						    "Show up to which address? ");
+		/* 
+		 * isHexParseable() is used throughout this program with the same lines/logic
+		 * Maybe put it into a function?
+		 */
+		String userInput;
+		while (!isHexParseable(userInput = scanner.nextLine())) {
+			System.out.print("Invalid address.\nShow up to which address? ");
 		}
-		short addr = scanner.nextShort();
+
+		short addr = parseHexToShort(userInput);
 
 		if (addr == 0 || addr >= mem.length - 1) {
-			addr = (short) mem.length;
+			addr = (short) (mem.length - 1);
 		}
 
 		System.out.println("Address:\tInstruction:\tAddress:\tInstruction:");
 
 		short i;
-		for (i = 0; i < addr; i++) {
+		for (i = 0; i <= addr; i++) {
 			if (i % 2 == 0 || i == 0) {
 				System.out.print(getInstruction(i, mem) + "\t\t");
 			} else {
@@ -412,7 +441,6 @@ public class CPU {
 		else
 			System.out.print("\nPress Enter to continue.");
 
-		scanner.nextLine(); /* Consuming \n */
 		while (scanner.nextLine() == "") {
 			break;
 		}
@@ -479,16 +507,18 @@ public class CPU {
 			instru = "STOP";
 
 		if (instru == null)
-			return "[" + byteToHex1F((byte) toUnsignedByte((byte) addr)) + "]:\t\t" + "Invalid";
+			return "[" + parseByteToHex1F((byte) toUnsignedByte((byte) addr)) + "]:\t\t" + "Invalid";
 		else if (getEleAtOrPC(addr) == 5 || getEleAtOrPC(addr) == 6 || getEleAtOrPC(addr) == 7 || getEleAtOrPC(addr) == 14) /* addr that don't use param */
-			return "[" + byteToHex1F((byte) toUnsignedByte((byte) addr)) + "]:\t\t" + instru;
+			return "[" + parseByteToHex1F((byte) toUnsignedByte((byte) addr)) + "]:\t\t" + instru;
 		else if (addr == mem.length - 1)
-			return "[" + byteToHex1F((byte) toUnsignedByte((byte) addr)) + "]:\t\t" + instru + " " + "0";
+			return "[" + parseByteToHex1F((byte) toUnsignedByte((byte) addr)) + "]:\t\t" + instru + " " + "0";
 		else
-			return "[" + byteToHex1F((byte) toUnsignedByte((byte) addr)) + "]:\t\t" + instru + " " + byteToHex1F((byte) toUnsignedByte(getEleAtOrPC((byte) (addr + 1))));
+			return "[" + parseByteToHex1F((byte) toUnsignedByte((byte) addr)) + "]:\t\t" + instru + " " + parseByteToHex1F((byte) toUnsignedByte(getEleAtOrPC((byte) (addr + 1))));
 	}
 
-	public void controlUnit(byte a, byte b, byte c, byte pc, byte[] mem, ALU alu, IDU idu, Scanner scanner) {
+	public void controlUnit(byte a, byte b, byte c, byte pc, byte[] mem, ALU alu,
+							IDU idu, Scanner scanner) {
+
 		switch (toUnsignedByte(getEleAtOrPC(pc))) {
 		case 0:
 			idu.sta(a, getEleAtOrPC((short) (pc + 1)));
@@ -511,15 +541,18 @@ public class CPU {
 			setPC((byte) (pc + 2));
 			break;
 		case 5:
-			alu.sum(a, b);
-			setPC((byte) (pc + 1));
+			setC(alu.sum((byte) toUnsignedByte((byte) getA()), (byte) toUnsignedByte((byte) getB())));
+			//setC(alu.sum(a, b));
+			setPC((byte) (getPC() + 1));
 			break;
 		case 6:
-			alu.sub(a, b);
+			setC(alu.sub((byte) toUnsignedByte((byte) getA()), (byte) toUnsignedByte((byte) getB())));
+			//setC(alu.sub(a, b));
 			setPC((byte) (pc + 1));
 			break;
 		case 7:
-			alu.com(a, b);
+			setC(alu.com((byte) toUnsignedByte((byte) getA()), (byte) toUnsignedByte((byte) getB())));
+			//setC(alu.com(a, b));
 			setPC((byte) (pc + 1));
 			break;
 		case 8:
@@ -543,8 +576,8 @@ public class CPU {
 			setPC((byte) (pc + 2));
 			break;
 		case 14:
-			System.out.print(" STOP: Terminating execution.\n" +
-							" >>> Press enter to continue.");
+			System.out.print("STOP: Terminating execution.\n" +
+							">>> Press enter to continue.");
 			if (scanner.nextLine() == "") {
 				idu.stop();
 				break;
@@ -553,8 +586,31 @@ public class CPU {
 			break;
 		}
 	}
+	
+private class ALU {
+	public byte sum(byte a, byte b) {
+		return (byte) (a + b);
+	}
 
-private class ALU { /* arithmetic-logic unit */
+	public byte sub(byte a, byte b) {
+		return (byte) (a - b);
+	}
+
+	public byte com(byte a, byte b) {
+		if (a < b) {
+			System.out.println("A < B: " + a + " "+ b);
+			return 1;
+		} else if (a > b) {
+			System.out.println("A > B: " + a + " "+ b);
+			return 2;
+		} else {
+			System.out.println("A = B: " + a + " "+ b);
+			return 0;
+		}
+	}
+}
+/*
+private class ALU {
 	public void sum(byte a, byte b) {
 		setC((byte) (a + b));
 	}
@@ -565,14 +621,17 @@ private class ALU { /* arithmetic-logic unit */
 
 	public void com(byte a, byte b) {
 		if (a < b) {
+			System.out.println("A < B: " + a + " "+ b);
 			setC((byte) 1);
 		} else if (a > b) {
+			System.out.println("A > B: " + a + " "+ b);
 			setC((byte) 2);
 		} else {
+			System.out.println("A = B: " + a + " "+ b);
 			setC((byte) 0);
 		}
 	}
-}
+}*/
 
 private class IDU { /* instruction decoder unit */
 	public void sta(byte a, short index){
@@ -600,13 +659,13 @@ private class IDU { /* instruction decoder unit */
 	}
 
 	/*
-	 * maybe needs to have COM at mem[pc-1] for cond jumps to work? not tested at the uni software.
-	 * idea:
+	 * maybe needs to have COM at mem[pc-1] for cond jumps to work? not tested at
+	 * the uni software. idea:
 	 * if (mem[pc-1] == 7 && c == 0) then jump
 	 * else pc+2;
 	 */
 	public void jpe(byte c, byte pc) {
-		if (c == 0) {
+		if (getC() == 0) {
 			setPC(getEleAtOrPC((short) (pc + 1)));
 		} else {
 			setPC((byte) (pc + 2));
@@ -614,7 +673,7 @@ private class IDU { /* instruction decoder unit */
 	}
 
 	public void jpg(byte c, byte pc) {
-		if (c == 2) {
+		if (getC() == 2) {
 			setPC(getEleAtOrPC((short) (pc + 1)));
 		} else {
 			setPC((byte) (pc + 2));
@@ -622,7 +681,7 @@ private class IDU { /* instruction decoder unit */
 	}
 
 	public void jpl(byte c, byte pc) {
-		if (c == 1) {
+		if (getC() == 1) {
 			setPC(getEleAtOrPC((short) (pc + 1)));
 		} else {
 			setPC((byte) (pc + 2));
