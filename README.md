@@ -14,6 +14,8 @@ To execute the program, run:
 $ java com/microjedi/Main
 ```
 
+Due to the Java's lack of unsigned support (especially) for bytes, some instructions might not work (namely only compare) on a Java version.  
+
 Translated text available in the com/microjedi/Text.java file.
 
 ![cupj-1](https://user-images.githubusercontent.com/49696706/120048850-ad90c600-bfee-11eb-9cec-6678d16fcf50.png)
