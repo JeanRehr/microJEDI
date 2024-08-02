@@ -14,7 +14,7 @@ To execute the program, run:
 $ java com/microjedi/Main
 ```
 
-Due to the Java's lack of unsigned support (especially) for bytes, some instructions might not work (namely only compare) on a Java version.  
+Due to Java's lack of unsigned support (especially) for bytes, some instructions might not work (namely only compare) as intended on a Java version (when compare receives a byte with a value higher than 128 it underflows).  
 
 Translated text available in the com/microjedi/Text.java file.
 
