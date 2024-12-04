@@ -1,6 +1,14 @@
 package com.microjedi;
 
-public class Text {
+import java.util.Scanner;
+
+public class ConsoleHandler {
+    private final Scanner scanner;
+
+    public ConsoleHandler(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
     public void clearConsole() {
 		/* ANSI CODE */
 		// System.out.println("\033[2J\033[;H"); /* Works but not always */
@@ -23,6 +31,33 @@ public class Text {
 						"-----------------------------------------------------------" +
 						"--------------------\n");
 	}
+
+	    
+	public String getNextLine() {
+        try {
+            return scanner.nextLine();
+        } catch (Exception e) {
+            System.err.println("Error reading input: " + e.getMessage());
+            return "";
+        }
+    }
+
+	public int getInt() {
+        while (!scanner.hasNextInt()) {
+            System.out.print("Invalid number.\n> ");
+            scanner.next();
+        }
+        return scanner.nextInt();
+    }
+
+    public int getUserOption(int low, int high) {
+        int userOpt = getInt();
+        while (userOpt > high || userOpt < low) {
+            System.out.print("Invalid option.\n> ");
+            userOpt = getInt();
+        }
+        return userOpt;
+    }
 
 	public void help1()	{
 		System.out.print(
@@ -225,7 +260,7 @@ Instructions supported by the CPU:
 |             |              | the memory location following this instruction (b=mem[pc+1]).                       |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | STC         | 4            | Stores the contents of register C in the memory location indicated                  |
-|             |              | the memory location following this instruction (c=mem[pc+1]).                       |
+|             |              | by the contents of the position following this instruction (c=mem[pc+1]).           |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | SUM         | 5            | Adds the contents of registers A and B and stores the result in register C.         |
 +-------------+--------------+-------------------------------------------------------------------------------------+
