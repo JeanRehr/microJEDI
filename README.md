@@ -27,21 +27,6 @@ Document version: 1.0 Mar 2009
 The microJEDI architecture is a hypothetical architecture developed for educational purposes.
 It is based on an Arithmetic Logic Unit (ALU), a Control Unit (CU), an Instruction Decoder Unit (UDI),
 3 registers associated with the ALU (registers A, B and C) and an instruction register (PC).
-The following diagram illustrates the structure of the architecture:
-
-    C----------------------|
-    ↑                      |
-    |                      |
-   ALU←---------CU---->PC  |
-    ↑            ↑     ↑   |
-____|____        |     |   |
-|       |        ↓     |   |
-A       B       IDU←---|   |
-↑       ↑        ↑         |
-|       |        |         |
-‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|
-                           ↓
-                       Data Addr
 
 Registers:
 1. are 8 bits
@@ -86,22 +71,7 @@ This program simulates a 64-byte memory accessed by the hypothetical CPU describ
 it allows the execution of the instructions contained in this memory,
 allowing the reading and modification of the data contained therein.
 
-The memory is represented by a matrix of 8 rows and 8 columns, as shown in the figure below:
-
-Registers:      A:0     B:0     C:0     [PC:0]
-Memory: ----------------------------------------------------------------+
-        00      01      02      03      04      05      06      07      |
-                                                                        |
-00:     <0>     0       0       0       0       0       0       0       |
-08:     0       0       0       0       0       0       0       0       |
-10:     0       0       0       0       0       0       0       0       |
-18:     0       0       0       0       0       0       0       0       |
-20:     0       0       0       0       0       0       0       0       |
-28:     0       0       0       0       0       0       0       0       |
-30:     0       0       0       0       0       0       0       0       |
-38:     0       0       0       0       0       0       0       0       |
-------------------------------------------------------------------------+
-Next instruction: [0]:          STA 0
+The memory is represented by a matrix of 8 rows and 8 columns.
 
 Each line of the matrix represents 8 consecutive bytes of memory. The first line represents the
 first 8 bytes, the second line the next 8 bytes, and so on.
@@ -123,15 +93,6 @@ The options offered by the simulator are:
 7. save program to file: allows the contents of memory to be saved (recorded) in a file on disk;
 8. help: presents a summary of the instructions supported by the CPU;
 9. exit: ends the execution of the program.
-
-Example:
--------------------------------------------------------------------------------
-Options:[1] Load program from file.     [6] Show instructions.
-        [2] Execute program.            [7] Save program to file.
-        [3] Change value in memory.     [8] Help.
-        [4] Change register.            [9] Exit.
-        [5] Show memory and registers.
--------------------------------------------------------------------------------
 
 Instructions supported by the CPU:
 +=============+==============+=====================================================================================+
