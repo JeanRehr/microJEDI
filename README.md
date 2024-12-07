@@ -28,7 +28,7 @@ The microJEDI architecture is a hypothetical architecture developed for educatio
 It is based on an Arithmetic Logic Unit (ALU), a Control Unit (CU), an Instruction Decoder Unit (UDI),
 3 registers associated with the ALU (registers A, B and C) and an instruction register (PC).
 
-Registers:
+Registers: 
 1. are 8 bits
 2. represent unsigned integer values ​​(0 to 255)
 3. A and B serve as input parameters for the ALU
