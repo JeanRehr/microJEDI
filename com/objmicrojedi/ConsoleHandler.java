@@ -28,6 +28,7 @@ public class ConsoleHandler {
         for (int i = 0; i < menuItems.length; i++) {
             System.out.printf("[%1d] %s\n", i+1, menuItems[i]);
         }
+        System.out.println("--------------------------------------------------");
     }
 
     public void displayMenuSide(String menuName, String[] menuItems) {
