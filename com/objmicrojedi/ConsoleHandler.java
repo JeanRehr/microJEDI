@@ -74,7 +74,6 @@ public class ConsoleHandler {
         return userOpt;
     }
 
-    // CPU (with memory and registers), ALU, CU, IDU, Instruction enum, driver main asking user inputs
     public void showHelp1() {
         System.out.print(
         "+======================================================================================+\n" + 
@@ -107,19 +106,19 @@ public class ConsoleHandler {
         "| PC increments by 1 if no parameters (SUM, SUB, MUL, DIV, COM), otherwise by 2.       |\n" +
         "|                                                                                      |\n" +
         "| STA  :  Stores the contents of register A in the memory location indicated by        |\n" +
-        "|         the contents of the position following this instruction (mem[pc+1]=a).       |\n" +
+        "|         the contents of the position following this instruction.                     |\n" +
         "|         Opcode instruction: 0                                                        |\n" +
         "| LDA  :  Loads into register A the contents of the position whose address is          |\n" +
-        "|         in the memory location following this instruction (a=mem[pc+1]).             |\n" +
+        "|         in the memory location following this instruction.                           |\n" +
         "|         Opcode instruction: 1                                                        |\n" +
         "| STB  :  Stores the contents of register B in the memory location indicated by        |\n" +
-        "|         the contents of the position following this instruction (mem[pc+1]=b).       |\n" +
+        "|         the contents of the position following this instruction.                     |\n" +
         "|         Opcode instruction: 2                                                        |\n" +
         "| LDB  :  Loads into register B the contents of the position whose address is          |\n" +
-        "|         in the memory location following this instruction (b=mem[pc+1]).             |\n" +
+        "|         in the memory location following this instruction.                           |\n" +
         "|         Opcode instruction: 3                                                        |\n" +
         "| STC  :  Stores the contents of register C in the memory location indicated by        |\n" +
-        "|         the contents of the position following this instruction (mem[pc+1]=c).       |\n" +
+        "|         the contents of the position following this instruction.                     |\n" +
         "|         Opcode instruction: 4                                                        |\n" +
         "| SUM  :  Adds the contents of registers A and B, stores the result in register C.     |\n" +
         "|         Opcode instruction: 5                                                        |\n" +
@@ -138,7 +137,7 @@ public class ConsoleHandler {
         "| COM  :  Compares the values of registers A and B, store the result in register C.    |\n" +
         "|         If A=B, C=0; if A<B, C=1; if A>B, C=2.                                       |\n" +
         "|         Opcode instruction: 9                                                        |\n" +
-        "| JMP  :  Jumps to address in the position following this instruction (pc=mem[pc+1]).  |\n" +
+        "| JMP  :  Jumps to address in the position following this instruction.                 |\n" +
         "|         Opcode instruction: A                                                        |\n" +
         "| JPE  :  Jumps to address in the position following this instruction                  |\n" +
         "|         if A=B (register C=0).                                                       |\n" +
@@ -283,19 +282,19 @@ Instructions supported by the CPU:
 | Instruction | Opcode (hex) |                                    What it does                                     |
 +=============+==============+=====================================================================================+
 | STA         | 0            | Stores the contents of register A in the memory location indicated                  |
-|             |              | by the contents of the position following this instruction (mem[pc+1]=a).           |
+|             |              | by the contents of the position following this instruction.                         |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | LDA         | 1            | Loads into register A the contents of the position whose address is in              |
-|             |              | the memory location following this instruction (a=mem[pc+1]).                       |
+|             |              | the memory location following this instruction.                                     |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | STB         | 2            | Stores the contents of register B in the memory location indicated                  |
-|             |              | by the contents of the position following this instruction (mem[pc+1]=b).           |
+|             |              | by the contents of the position following this instruction.                         |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | LDB         | 3            | Loads into register B the contents of the position whose address is in              |
-|             |              | the memory location following this instruction (b=mem[pc+1]).                       |
+|             |              | the memory location following this instruction.                                     |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | STC         | 4            | Stores the contents of register C in the memory location indicated                  |
-|             |              | by the contents of the position following this instruction (c=mem[pc+1]).           |
+|             |              | by the contents of the position following this instruction.                         |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | SUM         | 5            | Adds the contents of registers A and B and stores the result in register C.         |
 +-------------+--------------+-------------------------------------------------------------------------------------+
@@ -310,21 +309,21 @@ Instructions supported by the CPU:
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | JPE         | 9            | Diverts the execution flow to the address contained at the position following this  |
 |             |              | memory instruction. This is a conditional jump. Will only occur if A=B              |
-|             |              | (register C=0). Must be preceded by COM instruction (pc=mem[pc+1]).                 |
+|             |              | (register C=0). Must be preceded by COM instruction.                                |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | JPG         | A            | Diverts the execution flow to the address contained at the position following this  |
 |             |              | memory instruction. This is a conditional jump. Will only occur if A>B              |
-|             |              | (register C=2). Must be preceded by COM instruction (pc=mem[pc+1]).                 |
+|             |              | (register C=2). Must be preceded by COM instruction.                                |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | JPL         | B            | Diverts the execution flow to the address contained at the position following this  |
 |             |              | memory instruction. This is a conditional jump. Will only occur if A<B              |
-|             |              | (register C=1). Must be preceded by COM instruction (pc=mem[pc+1]).                 |
+|             |              | (register C=1). Must be preceded by COM instruction.                                |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | CONA        | C            | Loads a constant value into register A, which is the content of the memory          |
-|             |              | location following the instruction (mem[pc+1]=a) (a turns to const).                |
+|             |              | location following the instruction.                                                 |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | CONB        | D            | Loads a constant value into register B, which is the content of the memory          |
-|             |              | location following the instruction (mem[pc+1]=b) (b turns to const).                |
+|             |              | location following the instruction.                                                 |
 +-------------+--------------+-------------------------------------------------------------------------------------+
 | STOP        | E            | Terminate execution.                                                                |
 +-------------+--------------+-------------------------------------------------------------------------------------+
@@ -333,19 +332,19 @@ INSTRUCTION SET:
 PC increments by 1 if no parameters (SUM, SUB, MUL, DIV, COM), otherwise by 2.
                               
 STA  :  Stores the contents of register A in the memory location indicated by 
-        the contents of the position following this instruction (mem[pc+1]=a).
+        the contents of the position following this instruction.
         Opcode instruction: 0 
 LDA  :  Loads into register A the contents of the position whose address is   
-        in the memory location following this instruction (a=mem[pc+1]).      
+        in the memory location following this instruction.      
         Opcode instruction: 1 
 STB  :  Stores the contents of register B in the memory location indicated by 
-        the contents of the position following this instruction (mem[pc+1]=b).
+        the contents of the position following this instruction.
         Opcode instruction: 2 
 LDB  :  Loads into register B the contents of the position whose address is   
-        in the memory location following this instruction (b=mem[pc+1]).      
+        in the memory location following this instruction.      
         Opcode instruction: 3 
 STC  :  Stores the contents of register C in the memory location indicated by 
-        the contents of the position following this instruction (mem[pc+1]=c).
+        the contents of the position following this instruction.
         Opcode instruction: 4 
 SUM  :  Adds the contents of registers A and B, stores the result in register C.   
         Opcode instruction: 5 
@@ -359,7 +358,7 @@ DIV  :  Divides the content of register A with the value of register B and
 COM  :  Compares the values of registers A and B, store the result in register C.  
         If A=B, C=0; if A<B, C=1; if A>B, C=2.                                
          Opcode instruction: 9 
-JMP  :  Jumps to address in the position following this instruction (pc=mem[pc+1]).
+JMP  :  Jumps to address in the position following this instruction.
         Opcode instruction: A 
 JPE  :  Jumps to address in the position following this instruction           
         if A=B (register C=0).
