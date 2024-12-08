@@ -5,7 +5,7 @@ A school project, emulates a simple cpu.
 The version0 is not working as intended, keeping it for future reference.
 Version1 is working but it's a mess, not maintainable.
 
-The new version in com/objmicrojedi directory is working as intended and more maintainable, has support for multiplication and division.
+The new version in com/objmicrojedi directory is working as intended and more maintainable, added support for multiplication and division (opcodes 7 and 8).
 
 To compile, go to the directory where ./com directory is located, then run:
 ```
@@ -16,6 +16,7 @@ To execute the program, run:
 ```
 $ java com/objmicrojedi/Main
 ```
+
 
 Translated text:
 
@@ -132,7 +133,7 @@ The options offered by the simulator are:
 8. help: presents a summary of the instructions supported by the CPU;
 9. exit: ends the execution of the program.
 
-Example:7
+Example:
 ```
 -------------------------------------------------------------------------------
 Options:[1] Load program from file.     [6] Show instructions.
