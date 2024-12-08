@@ -13,10 +13,6 @@ public class ConaCommand implements ParameterizedCommand {
 
     @Override
     public void execute() {
-        int address = memory.read(registers.PC.getValue() + 1);
-        memory.write(address, registers.A.getValue());
-        if (!registers.A.isConst()) {
-            registers.A.changeConst();
-        }
+        registers.A.setValue(memory.read(registers.PC.getValue() + 1));
     }
 }

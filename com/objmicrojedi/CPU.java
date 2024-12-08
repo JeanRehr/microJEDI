@@ -23,15 +23,6 @@ public class CPU {
     }
 
     public void executeProgram() {
-        // Reset flags
-        if (this.registers.A.isConst()) {
-            this.registers.A.changeConst();
-        }
-
-        if (this.registers.B.isConst()) {
-            this.registers.B.changeConst();
-        }
-
         this.controlUnit.execute(this.idu);
     }
 

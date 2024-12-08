@@ -13,7 +13,9 @@ public class LdbCommand implements ParameterizedCommand {
 
     @Override
     public void execute() {
-        int value = memory.read(registers.PC.getValue() + 1);
-        registers.B.setValue(value);
+        //int position = memory.read(registers.PC.getValue() + 1);
+        //int value = memory.read(position);
+        //registers.B.setValue(value);
+        registers.B.setValue(memory.read(memory.read(registers.PC.getValue() + 1)));
     }
 }

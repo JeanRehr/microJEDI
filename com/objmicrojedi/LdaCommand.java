@@ -13,7 +13,9 @@ public class LdaCommand implements ParameterizedCommand {
 
     @Override
     public void execute() {
-        int value = memory.read(registers.PC.getValue() + 1);
-        registers.A.setValue(value);
+        //int position = memory.read(registers.PC.getValue() + 1);
+        //int value = memory.read(position);
+        //registers.A.setValue(value);
+        registers.A.setValue(memory.read(memory.read(registers.PC.getValue() + 1)));
     }
 }

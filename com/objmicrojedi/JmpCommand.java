@@ -14,6 +14,7 @@ public class JmpCommand implements ParameterizedCommand {
     @Override
     public void execute() {
         int address = memory.read(registers.PC.getValue() + 1);
-        memory.write(address, registers.PC.getValue() - 2);
+        // - 2 because as it is a parameterized command, it will be increased by 2
+        registers.PC.setValue(address - 2);
     }
 }

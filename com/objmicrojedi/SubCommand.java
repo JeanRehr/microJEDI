@@ -3,7 +3,7 @@ package com.objmicrojedi;
 public class SubCommand implements Command {
     private ControlUnit controlUnit;
     private Registers registers;
-    // Need a Memory attr to allow all the commands being called by the same interface using reflection 
+    // Need a Memory attr to allow it being called by the reflection at runtime
     private Memory memory;
 
     public SubCommand(ControlUnit controlUnit, Registers registers, Memory memory) {

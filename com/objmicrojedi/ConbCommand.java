@@ -13,10 +13,6 @@ public class ConbCommand implements ParameterizedCommand {
 
     @Override
     public void execute() {
-        int address = memory.read(registers.PC.getValue() + 1);
-        memory.write(address, registers.B.getValue());
-        if (!registers.B.isConst()) {
-            registers.B.changeConst();
-        }
+        registers.B.setValue(memory.read(registers.PC.getValue() + 1));
     }
 }

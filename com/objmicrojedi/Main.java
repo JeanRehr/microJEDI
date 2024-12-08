@@ -247,9 +247,9 @@ public class Main {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(name))) {
             for (int i = 0; i < cpu.getMemSize(); i++) {
                 if (i % 8 == 0 && i != 0) {
-                    writer.write("\n");
+                    //writer.write("\n");
                 }
-                writer.write("0x" + parseIntToHex(cpu.getMemValue(i)) + " ");
+                writer.write("0x" + parseIntToHex(cpu.getMemValue(i)) + "\n");
             }
         } catch (IOException ioe) {
             System.out.println("Could not save memory.");
