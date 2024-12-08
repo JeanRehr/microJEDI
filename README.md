@@ -60,15 +60,19 @@ PC = program counter, address of the next instruction to be executed
 
 ALU - Arithmetic Logic Unit:
 1. performs the operations of:
+   
     a. addition: when the SUM instruction is executed; it adds the contents of registers A and B
     and stores the result of the operation in register C; if the result of the addition exceeds
     255, an OVERFLOW event occurs, and the result stored in C will be (A+B) -256.
+   
     b. subtraction: when the SUB instruction is executed; it performs the operation A - B and stores
     the result of the operation in register C; if the result of the subtraction is less than
     0 (zero), an UNDERFLOW event occurs, and the result stored in C will be (A-B) + 256.
+   
     c. comparison: when the COM instruction is executed; it compares the values ​​of registers A and B;
     if A is equal to B, then register C is loaded by the ALU with the value 0 (zero);
     if A<B, C is loaded with the value 1 (one) and if A>B, C is loaded with the value 2.
+   
 2. The ALU is controlled by the CU, which is responsible for its activation.
 
 CU - Control Unit:
